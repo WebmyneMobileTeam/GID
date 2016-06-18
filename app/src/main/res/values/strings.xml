@@ -6,4 +6,5 @@
 
     <string name="action_settings">Settings</string>
     <string name="facebook_app_id">568563739982339</string>
+    <string name="exception_message">exception</string>
 </resources>

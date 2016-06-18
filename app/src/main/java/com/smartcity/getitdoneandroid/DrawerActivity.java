@@ -104,7 +104,7 @@ public class DrawerActivity extends AppCompatActivity
 
                 Type listType = new TypeToken<List<ComplaintList>>() {}.getType();
                 complaints = new GsonBuilder().create().fromJson(response,listType);
-                recyclerComplaints.setAdapter(new MyItemRecyclerViewAdapter(complaints));
+                recyclerComplaints.setAdapter(new MyItemRecyclerViewAdapter(getBaseContext(), complaints));
             }
 
             @Override
