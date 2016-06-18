@@ -61,6 +61,14 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_menu_camera"
                 android:transitionName="imageCover" />
+                <TextView android:id="@+id/tvStatus"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="10dp"
+                    android:textColor="@color/my_theme_secondary_text"
+                    android:text="In Progress"/>
 
             </RelativeLayout>
             <FrameLayout
