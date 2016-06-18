@@ -76,6 +76,8 @@ public class DrawerActivity extends AppCompatActivity
             textViewEmail.setText(appUser.getEmail());
             imageView = (ImageView)navigationView.getHeaderView(0).findViewById(R.id.imageView);
 
+
+
             String profilepic = "https://graph.facebook.com/"+appUser.getFbid()+"/picture?type=small";
             //Glide.with(DrawerActivity.this).load(profilepic).asBitmap().into(imageView);
 
