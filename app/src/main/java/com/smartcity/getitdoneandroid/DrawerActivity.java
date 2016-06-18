@@ -95,7 +95,7 @@ public class DrawerActivity extends AppCompatActivity
 
        final ProgressDialog pd = ProgressDialog.show(DrawerActivity.this,"Please wait","Loading..",true);
 
-        new CallWebService("http://getitdonee.azurewebsites.net/post", CallWebService.TYPE_JSONARRAY) {
+        new CallWebService("http://getitdonee.azurewebsites.net/post?facebook_user_id=xy1z", CallWebService.TYPE_JSONARRAY) {
             @Override
             public void response(String response) {
 
