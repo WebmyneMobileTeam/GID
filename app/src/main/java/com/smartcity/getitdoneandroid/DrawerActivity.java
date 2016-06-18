@@ -1,8 +1,11 @@
 package com.smartcity.getitdoneandroid;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,9 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.smartcity.getitdoneandroid.helpers.ComplexPreferences;
 
 public class DrawerActivity extends AppCompatActivity
@@ -23,6 +29,7 @@ public class DrawerActivity extends AppCompatActivity
     private  Toolbar toolbar;
     private TextView txtUserName;
     private TextView textViewEmail;
+    private ImageView imageView;
     private NavigationView navigationView;
 
 
@@ -62,10 +69,25 @@ public class DrawerActivity extends AppCompatActivity
         AppUser appUser = preferences.getObject("appuser",AppUser.class);
 
         if(appUser != null){
+
             txtUserName = (TextView)navigationView.getHeaderView(0).findViewById(R.id.textView);
             textViewEmail = (TextView)navigationView.getHeaderView(0).findViewById(R.id.textViewEmail);
             txtUserName.setText(appUser.getFullName());
             textViewEmail.setText(appUser.getEmail());
+            imageView = (ImageView)navigationView.getHeaderView(0).findViewById(R.id.imageView);
+
+            String profilepic = "https://graph.facebook.com/"+appUser.getFbid()+"/picture?type=small";
+            //Glide.with(DrawerActivity.this).load(profilepic).asBitmap().into(imageView);
+
+            Glide.with(DrawerActivity.this).load(profilepic).asBitmap().centerCrop().into(new BitmapImageViewTarget(imageView) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    imageView.setImageDrawable(circularBitmapDrawable);
+                }
+            });
 
         }
 
