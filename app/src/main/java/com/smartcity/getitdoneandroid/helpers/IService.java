@@ -1,6 +1,6 @@
 package com.smartcity.getitdoneandroid.helpers;
 
-        import com.android.volley.VolleyError;
+import com.android.volley.VolleyError;
 
 public interface IService {
 

@@ -144,9 +144,7 @@
                             android:layout_gravity="end|right"
                             android:textColor="@color/my_theme_secondary_text"
                             android:text="#DhruvilPatel"/>
-
                     </LinearLayout>
-
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
