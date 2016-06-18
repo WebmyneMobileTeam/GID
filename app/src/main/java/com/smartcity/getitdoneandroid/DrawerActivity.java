@@ -1,11 +1,17 @@
 package com.smartcity.getitdoneandroid;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,9 +25,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.smartcity.getitdoneandroid.complaint.AddComplaintScreen;
+import com.smartcity.getitdoneandroid.complaint.ComplaintList;
+import com.smartcity.getitdoneandroid.complaint.MyItemRecyclerViewAdapter;
+import com.smartcity.getitdoneandroid.complaint.dummy.DummyContent;
+import com.smartcity.getitdoneandroid.helpers.CallWebService;
 import com.smartcity.getitdoneandroid.helpers.ComplexPreferences;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,7 +49,8 @@ public class DrawerActivity extends AppCompatActivity
     private TextView textViewEmail;
     private ImageView imageView;
     private NavigationView navigationView;
-
+    private RecyclerView recyclerComplaints;
+    private ArrayList<ComplaintList> complaints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +64,10 @@ public class DrawerActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                Intent moveToAddComplaintScreen = new Intent(DrawerActivity.this, AddComplaintScreen.class);
+                startActivity(moveToAddComplaintScreen);
+
             }
         });
 
@@ -59,7 +80,38 @@ public class DrawerActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        recyclerComplaints = (RecyclerView)findViewById(R.id.recyclerComplaints);
+        recyclerComplaints.setLayoutManager(new LinearLayoutManager(this));
+        recyclerComplaints.addItemDecoration(new VerticalSpaceItemDecoration(8));
+
+
         fetchCurrentUser();
+        fetchComplaints();
+
+    }
+
+    private void fetchComplaints() {
+
+
+       final ProgressDialog pd = ProgressDialog.show(DrawerActivity.this,"Please wait","Loading..",true);
+
+        new CallWebService("http://getitdonee.azurewebsites.net/post", CallWebService.TYPE_JSONARRAY) {
+            @Override
+            public void response(String response) {
+
+                pd.dismiss();
+                Log.e("Response from net",response);
+
+                Type listType = new TypeToken<List<ComplaintList>>() {}.getType();
+                complaints = new GsonBuilder().create().fromJson(response,listType);
+                recyclerComplaints.setAdapter(new MyItemRecyclerViewAdapter(complaints));
+            }
+
+            @Override
+            public void error(VolleyError error) {
+                pd.dismiss();
+            }
+        }.start();
 
     }
 
@@ -109,7 +161,7 @@ public class DrawerActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.drawer, menu);
-        return true;
+        return false;
     }
 
     @Override
@@ -145,5 +197,20 @@ public class DrawerActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+
+        private final int mVerticalSpaceHeight;
+
+        public VerticalSpaceItemDecoration(int mVerticalSpaceHeight) {
+            this.mVerticalSpaceHeight = mVerticalSpaceHeight;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            outRect.bottom = mVerticalSpaceHeight;
+        }
     }
 }
