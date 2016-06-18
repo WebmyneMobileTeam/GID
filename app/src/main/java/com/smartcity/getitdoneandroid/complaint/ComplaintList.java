@@ -16,6 +16,11 @@ public class ComplaintList implements Serializable{
     public String file_link;
     public String created_datetime;
     public String status;
+    public boolean upvoted;
+    public boolean flagged;
+    public int upvote_count = 0;
+    public int flag_count = 0;
+
     public Corporator corporator_details;
 
     public ComplaintList() {
