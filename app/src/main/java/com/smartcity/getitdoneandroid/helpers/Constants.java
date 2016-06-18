@@ -6,4 +6,6 @@ package com.smartcity.getitdoneandroid.helpers;
 public class Constants {
 
     public static String FB_FIXED_URL = "https://graph.facebook.com/{facebookId}/picture?type=small";
+
+    //
 }
