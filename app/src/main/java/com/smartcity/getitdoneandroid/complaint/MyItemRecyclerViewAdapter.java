@@ -28,6 +28,7 @@ import com.smartcity.getitdoneandroid.helpers.ComplexPreferences;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
@@ -37,12 +38,43 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     private AppUser appUser;
     private boolean isVotedClicked = false;
     private boolean isFlagClicked = false;
+    private List<ComplaintList> mValuesFilterd;
 
     public MyItemRecyclerViewAdapter(Context context, List<ComplaintList> items) {
         mValues = items;
         mContext = context;
         ComplexPreferences preferences = ComplexPreferences.getComplexPreferences(context,"userpref",context.MODE_PRIVATE);
         appUser = preferences.getObject("appuser",AppUser.class);
+        mValuesFilterd = new ArrayList<>();
+
+    }
+
+    public void filterResolved(boolean value){
+        mValuesFilterd = new ArrayList<>();
+
+        for(ComplaintList complain : mValues){
+
+
+            if(value == true){
+
+                if(complain.status.equalsIgnoreCase("pending")){
+
+                }else{
+                    mValuesFilterd.add(complain);
+                }
+
+            }else{
+
+                if(complain.status.equalsIgnoreCase("pending") || complain.status.equalsIgnoreCase("in progress")){
+                    mValuesFilterd.add(complain);
+                }else{
+
+                }
+
+            }
+        }
+
+        notifyDataSetChanged();
 
     }
 
@@ -53,14 +85,17 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         return new ViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.mItem = mValues.get(position);
+        holder.mItem = mValuesFilterd.get(position);
         holder.mContentView.setText(holder.mItem.title);
         holder.descriptionTV.setText(holder.mItem.description);
         holder.corporatorNameTV.setText(holder.mItem.corporator_details != null ? "#"+holder.mItem.corporator_details.first_name: "" );
         holder.likeCount.setText(""+holder.mItem.upvote_count);
         holder.flagCount.setText(""+holder.mItem.flag_count);
+        holder.tvStatus.setText(holder.mItem.status);
         Glide.with(mContext)
                 .load(holder.mItem.file_link!=null? holder.mItem.file_link:"")
                 .into(holder.imageView);
@@ -161,7 +196,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mValuesFilterd.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -174,6 +209,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public final LinearLayout likeLayout, flagLayout;
         public final ImageView likeIV, flagIV;
         public final TextView likeCount, flagCount;
+        public final TextView tvStatus;
 
 
         public ViewHolder(View view) {
@@ -189,6 +225,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             flagIV = (ImageView) view.findViewById(R.id.flagIV);
             likeCount = (TextView) view.findViewById(R.id.likeNumber);
             flagCount = (TextView) view.findViewById(R.id.commentCount);
+            tvStatus = (TextView)view.findViewById(R.id.tvStatus);
 
         }
 

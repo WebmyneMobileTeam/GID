@@ -53,6 +53,7 @@ public class DrawerActivity extends AppCompatActivity
     private RecyclerView recyclerComplaints;
     private ArrayList<ComplaintList> complaints;
     private AppUser appUser;
+    private MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +113,12 @@ public class DrawerActivity extends AppCompatActivity
                 Log.e("Response from net",response);
 
                 Type listType = new TypeToken<List<ComplaintList>>() {}.getType();
+
                 complaints = new GsonBuilder().create().fromJson(response,listType);
-                recyclerComplaints.setAdapter(new MyItemRecyclerViewAdapter(getBaseContext(), complaints));
+
+                myItemRecyclerViewAdapter = new MyItemRecyclerViewAdapter(getBaseContext(), complaints);
+                recyclerComplaints.setAdapter(myItemRecyclerViewAdapter);
+                myItemRecyclerViewAdapter.filterResolved(false);
             }
 
             @Override
@@ -183,6 +188,7 @@ public class DrawerActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -197,6 +203,11 @@ public class DrawerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if(id == R.id.nav_complaint){
+            myItemRecyclerViewAdapter.filterResolved(false);
+        }else if(id == R.id.nav_resolved){
+            myItemRecyclerViewAdapter.filterResolved(true);
+        }
 
 
 

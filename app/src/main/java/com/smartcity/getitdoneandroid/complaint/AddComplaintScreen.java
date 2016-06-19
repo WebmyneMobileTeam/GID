@@ -249,7 +249,7 @@ public class AddComplaintScreen extends AppCompatActivity {
 
             if(i==pos){
                 textView.setTextColor(ContextCompat.getColor(AddComplaintScreen.this,R.color.colorPrimary));
-                imageView.setColorFilter(Color.parseColor("#3F51B5"), PorterDuff.Mode.SRC_ATOP);
+                imageView.setColorFilter(Color.parseColor("#2D936C"), PorterDuff.Mode.SRC_ATOP);
             }else{
                 textView.setTextColor(Color.parseColor("#494949"));
                 imageView.setColorFilter(Color.parseColor("#494949"), PorterDuff.Mode.SRC_ATOP);

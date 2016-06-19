@@ -32,6 +32,7 @@
         android:tintMode="src_atop"
         app:layout_behavior="com.smartcity.getitdoneandroid.helpers.ScrollAwareFABBehavior"
         android:tint="#fff"
+        app:backgroundTint="@color/colorPrimary"
         android:src="@android:drawable/ic_input_add" />
 
 </android.support.design.widget.CoordinatorLayout>
