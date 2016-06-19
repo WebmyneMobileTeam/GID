@@ -31,7 +31,9 @@ import com.ragnarok.rxcamera.RxCameraData;
 import com.ragnarok.rxcamera.config.RxCameraConfig;
 import com.ragnarok.rxcamera.config.RxCameraConfigChooser;
 import com.ragnarok.rxcamera.request.Func;
+import com.smartcity.getitdoneandroid.AppUser;
 import com.smartcity.getitdoneandroid.R;
+import com.smartcity.getitdoneandroid.helpers.ComplexPreferences;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -39,6 +41,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
@@ -66,6 +69,10 @@ public class AddComplaintScreen extends AppCompatActivity {
     private EditText edTitle;
     private EditText edDescription;
     private ProgressDialog dialogUpload;
+    private String title;
+    private String description;
+    private String fbid;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +108,19 @@ public class AddComplaintScreen extends AppCompatActivity {
 
     class ImageUploadTask extends AsyncTask<Void, Void, String> {
 
+        String sResponse;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
            // dialogUpload = ProgressDialog.show(AddComplaintScreen.this,"Please wait","Submitting Complaint");
             Toast.makeText(AddComplaintScreen.this, "Uploading.....", Toast.LENGTH_SHORT).show();
+
+            title = edTitle.getText().toString();
+            description = edDescription.getText().toString();
+
+            ComplexPreferences preferences = ComplexPreferences.getComplexPreferences(AddComplaintScreen.this,"userpref",MODE_PRIVATE);
+            AppUser appUser = preferences.getObject("appuser",AppUser.class);
+            fbid = appUser.getFbid();
         }
 
         @Override
@@ -115,17 +130,18 @@ public class AddComplaintScreen extends AppCompatActivity {
                 HttpContext localContext = new BasicHttpContext();
                 HttpPost httpPost = new HttpPost("http://getitdonee.azurewebsites.net/post");
 
+
                 MultipartEntity entity = new MultipartEntity(
                         HttpMultipartMode.BROWSER_COMPATIBLE);
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                 byte[] data = bos.toByteArray();
-                entity.addPart("title", new StringBody("tt"));
-                entity.addPart("description", new StringBody("dd"));
-                entity.addPart("facebook_id", new StringBody("fbid"));
-                entity.addPart("latitude", new StringBody("12"));
-                entity.addPart("longitude", new StringBody("13"));
+                entity.addPart("title", new StringBody(title));
+                entity.addPart("description", new StringBody(description));
+                entity.addPart("facebook_id", new StringBody(fbid));
+                entity.addPart("latitude", new StringBody("22.3288499"));
+                entity.addPart("longitude", new StringBody("73.2077872"));
                 entity.addPart("file", new ByteArrayBody(data, "myImage.jpg"));
                 httpPost.setEntity(entity);
                 HttpResponse response = httpClient.execute(httpPost,
@@ -134,7 +150,7 @@ public class AddComplaintScreen extends AppCompatActivity {
                         new InputStreamReader(
                                 response.getEntity().getContent(), "UTF-8"));
 
-                String sResponse = reader.readLine();
+                sResponse = reader.readLine();
                 return sResponse;
             } catch (Exception e) {
                 Log.e(e.getClass().getName(), e.getMessage(), e);
@@ -155,22 +171,10 @@ public class AddComplaintScreen extends AppCompatActivity {
 //                if (dialogUpload.isShowing())
 //                    dialogUpload.dismiss();
 
-                Toast.makeText(AddComplaintScreen.this, "Done", Toast.LENGTH_SHORT).show();
-//
-//                if (sResponse != null) {
-//                    JSONObject JResponse = new JSONObject(sResponse);
-//                    int success = JResponse.getInt("SUCCESS");
-//                    String message = JResponse.getString("MESSAGE");
-//                    if (success == 0) {
-//                        Toast.makeText(getApplicationContext(), message,
-//                                Toast.LENGTH_LONG).show();
-//                    } else {
-//                        Toast.makeText(getApplicationContext(),
-//                                "Photo uploaded successfully",
-//                                Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                }
+                Log.e("Response Upload",sResponse);
+                Toast.makeText(AddComplaintScreen.this, "Complaint successfully posted", Toast.LENGTH_SHORT).show();
+                finish();
+
             } catch (Exception e) {
 
                 Log.e(e.getClass().getName(), e.getMessage(), e);

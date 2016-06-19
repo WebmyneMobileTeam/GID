@@ -20,6 +20,8 @@ public class ComplaintList implements Serializable{
     public boolean flagged;
     public int upvote_count = 0;
     public int flag_count = 0;
+    public boolean isflag = false;
+    public boolean isVote = false;
 
     public Corporator corporator_details;
 

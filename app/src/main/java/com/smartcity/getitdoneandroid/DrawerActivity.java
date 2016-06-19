@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +52,7 @@ public class DrawerActivity extends AppCompatActivity
     private NavigationView navigationView;
     private RecyclerView recyclerComplaints;
     private ArrayList<ComplaintList> complaints;
+    private AppUser appUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,8 @@ public class DrawerActivity extends AppCompatActivity
             }
         });
 
+        fab.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -79,15 +83,20 @@ public class DrawerActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_complaint);
 
         recyclerComplaints = (RecyclerView)findViewById(R.id.recyclerComplaints);
         recyclerComplaints.setLayoutManager(new LinearLayoutManager(this));
         recyclerComplaints.addItemDecoration(new VerticalSpaceItemDecoration(8));
 
-
         fetchCurrentUser();
-        fetchComplaints();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchComplaints();
     }
 
     private void fetchComplaints() {
@@ -95,7 +104,7 @@ public class DrawerActivity extends AppCompatActivity
 
        final ProgressDialog pd = ProgressDialog.show(DrawerActivity.this,"Please wait","Loading..",true);
 
-        new CallWebService("http://getitdonee.azurewebsites.net/post?facebook_user_id=xy1z", CallWebService.TYPE_JSONARRAY) {
+        new CallWebService("http://getitdonee.azurewebsites.net/post?facebook_user_id="+appUser.getFbid(), CallWebService.TYPE_JSONARRAY) {
             @Override
             public void response(String response) {
 
@@ -113,12 +122,15 @@ public class DrawerActivity extends AppCompatActivity
             }
         }.start();
 
+
+
+
     }
 
     private void fetchCurrentUser() {
 
         ComplexPreferences preferences = ComplexPreferences.getComplexPreferences(DrawerActivity.this,"userpref",MODE_PRIVATE);
-        AppUser appUser = preferences.getObject("appuser",AppUser.class);
+        appUser = preferences.getObject("appuser",AppUser.class);
 
         if(appUser != null){
 
@@ -185,13 +197,7 @@ public class DrawerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
