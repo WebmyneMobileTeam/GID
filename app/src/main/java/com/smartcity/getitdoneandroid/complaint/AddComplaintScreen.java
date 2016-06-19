@@ -267,6 +267,8 @@ public class AddComplaintScreen extends AppCompatActivity {
             Bundle extras = data.getExtras();
              imageBitmap = (Bitmap) extras.get("data");
             ((ImageView)findViewById(R.id.cameraIV)).setImageBitmap(imageBitmap);
+            ((ImageView)findViewById(R.id.cameraIV)).setScaleType(ImageView.ScaleType.CENTER_CROP);
+
         }
     }
 
